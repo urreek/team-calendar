@@ -18,6 +18,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using team_calendar.Data;
 using team_calendar.Models;
+using team_calendar.Repositories;
+using team_calendar.Services;
 
 namespace team_calendar
 {
@@ -69,10 +71,14 @@ namespace team_calendar
                 };  
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddScoped<DbContext, ApplicationDbContext>();
+            services.AddScoped<ITeamService, TeamService>();
+            services.AddScoped<ITeamRepository, TeamRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ApplicationDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -93,6 +99,9 @@ namespace team_calendar
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
+
+            dbContext.Database.EnsureDeleted();
+            dbContext.Database.EnsureCreated();
         }
     }
 }

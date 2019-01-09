@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 
@@ -11,5 +12,7 @@ namespace team_calendar.Models
         public string LastName { get; set; }
         public string Address { get; set; }
         public long? FacebookId { get; set; }
+
+        public List<UserTeam> UserTeams { get; set; }
     }
 }

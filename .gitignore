@@ -26,6 +26,7 @@ chrome-user-data
 *.swo
 
 #####.NET#####
+Data/Migrations
 *.swp
 *.*~
 appsettings.Development.json

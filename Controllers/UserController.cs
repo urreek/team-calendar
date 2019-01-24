@@ -37,14 +37,15 @@ public class UserController : Controller
     }
     
     [HttpPost]
-    public async Task<object> Login([FromBody] LoginDto model)
+    public async Task<IActionResult> Login([FromBody] LoginDto model)
     {
         var result = await signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
         
         if (result.Succeeded)
         {
             var appUser = userManager.Users.SingleOrDefault(r => r.Email == model.Email);
-            return GenerateJwtToken(model.Email, appUser);
+            string token = GenerateJwtToken(model.Email, appUser);
+            return Ok(token);
         }
         
         return BadRequest("Username or password is wrong!");
@@ -73,7 +74,7 @@ public class UserController : Controller
         if (result.Succeeded)
         {
             await signInManager.SignInAsync(user, false);
-            var token = GenerateJwtToken(model.Email, user);
+            string token = GenerateJwtToken(model.Email, user);
             return Ok(token);
         }
         

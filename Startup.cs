@@ -96,7 +96,7 @@ namespace team_calendar
                 .AllowAnyHeader()
             );
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMvc();
 

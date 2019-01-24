@@ -51,7 +51,7 @@ public class UserController : Controller
     }
     
     [HttpPost]
-    public async Task<object> Register([FromBody] RegisterDto model)
+    public async Task<IActionResult> Register([FromBody] RegisterDto model)
     {
         var user = new User
         {
@@ -60,19 +60,27 @@ public class UserController : Controller
             UserName = model.Email, 
             Email = model.Email,
         };
+        
+        var dbUser = await userManager.FindByNameAsync(model.Email);
+
+        if (dbUser != null) 
+        {
+            return Conflict();
+        }
 
         var result = await userManager.CreateAsync(user, model.Password);
 
         if (result.Succeeded)
         {
             await signInManager.SignInAsync(user, false);
-            return GenerateJwtToken(model.Email, user);
+            var token = GenerateJwtToken(model.Email, user);
+            return Ok(token);
         }
         
-        throw new ApplicationException("UNKNOWN_ERROR");
+        return BadRequest();
     }
 
-    private object GenerateJwtToken(string email, User user)
+    private string GenerateJwtToken(string email, User user)
     {
         var claims = new List<Claim>
         {
